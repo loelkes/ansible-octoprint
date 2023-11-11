@@ -28,11 +28,11 @@ Contributions welcome - please refer to the [Contributing Guidelines](https://gi
 Current Status
 --------------
 
-![Release](https://img.shields.io/github/v/release/semuconsulting/ansible_octoprint)
-![Release Date](https://img.shields.io/github/release-date/semuconsulting/ansible_octoprint)
-![Last Commit](https://img.shields.io/github/last-commit/semuconsulting/ansible_octoprint)
-![Contributors](https://img.shields.io/github/contributors/semuconsulting/ansible_octoprint.svg)
-![Open Issues](https://img.shields.io/github/issues-raw/semuconsulting/ansible_octoprint)
+![Release](https://img.shields.io/github/v/release/semuconsulting/semuadmin.octoprint)
+![Release Date](https://img.shields.io/github/release-date/semuconsulting/semuadmin.octoprint)
+![Last Commit](https://img.shields.io/github/last-commit/semuconsulting/semuadmin.octoprint)
+![Contributors](https://img.shields.io/github/contributors/semuconsulting/semuadmin.octoprint.svg)
+![Open Issues](https://img.shields.io/github/issues-raw/semuconsulting/semuadmin.octoprint)
 ![Downloads](https://img.shields.io/ansible/role/d/42560)
 
 Requirements
