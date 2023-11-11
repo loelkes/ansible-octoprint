@@ -1,0 +1,85 @@
+---
+# tasks file for octoprint webcam
+
+- name: Stop webcam streaming service if it exists and is running.
+  systemd:
+    name: mjpg_streamer
+    enabled: true
+    state: stopped
+  ignore_errors: True
+
+- name: Install mjpg_streamer dependencies.
+  package:
+    name:
+      - subversion
+      - imagemagick
+      - ffmpeg
+      - libv4l-dev
+      - cmake
+    state: present
+
+- name: Install libjpeg.
+  package:
+    name:
+      - libjpeg62-turbo-dev
+    state: present
+  when: (ansible_distribution != "Ubuntu") or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version < "20")
+
+- name: Install libjpeg for Ubuntu 20.
+  package:
+    name:
+      - libjpeg-turbo8-dev
+    state: present
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version >= "20"
+
+- name: Add webcam user to video group.
+  user:
+    name: "{{ webcam_user }}"
+    groups: video
+    system: true
+    append: true
+
+- name: Clone mjpg-streamer repo.
+  git:
+    repo: "{{ webcam_repo }}"
+    dest: "/home/{{ webcam_user }}/mjpg-streamer"
+    version: master
+  become_user: "{{ webcam_user }}"
+  become: true
+
+- name: Build mjpg-streamer from source.
+  make:
+    chdir: "{{ webcam_dir }}"
+    target: all
+
+- name: Install systemd service template.
+  template:
+    src: mjpg_streamer.service.j2
+    dest: /etc/systemd/system/mjpg_streamer.service
+    owner: "{{ webcam_user }}"
+
+- name: Change ownership of mjpg-streamer directory.
+  file:
+    path: "/home/{{ webcam_user }}/mjpg-streamer"
+    state: directory
+    recurse: true
+    owner: "{{ webcam_user }}"
+    group: "{{ webcam_user }}"
+
+- name: Add lines to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    line: "{{ item }}"
+    validate: /usr/sbin/visudo -cf %s
+  loop:
+    - "{{ webcam_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl start mjpg_streamer"
+    - "{{ webcam_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl stop mjpg_streamer"
+    - "{{ webcam_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl restart mjpg_streamer"
+
+- name: Start webcam streaming service.
+  systemd:
+    name: mjpg_streamer
+    enabled: true
+    state: restarted
+    daemon_reload: true

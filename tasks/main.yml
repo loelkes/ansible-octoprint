@@ -1,0 +1,14 @@
+---
+# tasks file for octoprint
+
+- name: Install octoprint
+  ansible.builtin.include_tasks: octoprint.yml
+  when: install_octoprint and not uninstall_services
+
+- name: Install mjpg_streamer
+  ansible.builtin.include_tasks: webcam.yml
+  when: install_mjpg_streamer and not uninstall_services
+
+- name: Remove octoprint and mjpg_streamer
+  ansible.builtin.include_tasks: uninstall.yml
+  when: uninstall_services

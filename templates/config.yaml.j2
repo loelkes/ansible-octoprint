@@ -1,0 +1,62 @@
+accessControl:
+  salt:
+api:
+  key:
+plugins:
+  announcements:
+    _config_version: 1
+  discovery:
+    upnpUuid:
+  errortracking:
+    unique_id: 
+  softwareupdate:
+    _config_version: 6
+  tracking:
+    enabled: true
+    unique_id: 
+printerProfiles:
+  default: _default
+server:
+  commands:
+    serverRestartCommand: sudo systemctl restart octoprint
+    systemRestartCommand: sudo shutdown -r now
+    systemShutdownCommand: sudo shutdown -h now
+  firstRun: true
+  onlineCheck:
+    enabled: true
+  pluginBlacklist:
+    enabled: true
+  secretKey:
+  seenWizards:
+    corewizard: 3
+    tracking: null
+temperature:
+  profiles:
+  - bed: 100
+    chamber: null
+    extruder: 210
+    name: ABS
+  - bed: 70
+    chamber: null
+    extruder: 250
+    name: PETG
+  - bed: 60
+    chamber: null
+    extruder: 200
+    name: PLA
+{% if install_mjpg_streamer == true -%}
+system:
+  actions:
+  - action: streamon
+    command: sudo systemctl restart mjpg_streamer.service
+    confirm: false
+    name: Start video stream
+  - action: streamoff
+    command: sudo systemctl stop mjpg_streamer.service
+    confirm: false
+    name: Stop video stream
+webcam:
+  ffmpeg: /usr/bin/ffmpeg
+  snapshot: http://localhost:{{ webcam_port }}/?action=snapshot
+  stream: http://{{ ansible_default_ipv4.address }}:{{ webcam_port }}/?action=stream
+{% endif %}

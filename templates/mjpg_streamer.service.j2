@@ -1,0 +1,18 @@
+[Unit]
+Description=A server for streaming Motion-JPEG from a video capture device
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ webcam_user }}
+Environment=LD_LIBRARY_PATH={{ webcam_dir }}
+{% if webcam_type == 'raspi' -%}
+ExecStart={{ webcam_dir }}/mjpg_streamer -o "output_http.so -w {{ webcam_dir }}/www" -i "input_raspicam.so -x {{ webcam_width }} -y {{ webcam_height }} -fps {{ webcam_fps }}"
+{% elif webcam_type == 'custom' -%}
+ExecStart={{ webcam_dir }}/mjpg_streamer -o "output_http.so -w {{ webcam_dir }}/www" -i "{{ custom_input }}"
+{% else -%}
+ExecStart={{ webcam_dir }}/mjpg_streamer -o "output_http.so -w {{ webcam_dir }}/www" -i "input_uvc.so {% if webcam_device is defined %} -d /dev/{{webcam_device }} {% endif %} -r {{ webcam_width }}x{{ webcam_height }} -f {{ webcam_fps }}"
+{% endif -%}
+
+[Install]
+WantedBy=multi-user.target
