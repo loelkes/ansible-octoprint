@@ -3,6 +3,10 @@ Role Name
 
 semuadmin.octoprint
 
+# NO LONGER ACTIVELY MAINTAINED BY ORIGINAL AUTHOR
+
+#### I NO LONGER HAVE ANY INTEREST IN MAINTAINING THIS ANSIBLE ROLE OR IN LEARNING HOW TO ADMINISTER IT USING THE NEW ANSIBLE GALAXY WEB PORTAL. IF ANYONE ELSE WANTS TO TAKE IT ON, BE MY GUEST.
+
 [Ansible role](https://galaxy.ansible.com/semuadmin/octoprint) to deploy OctoPrint and/or mjpg_streamer as systemd services on Raspberry Pi
 running stock Raspberry Pi OS 32-bit Lite or Full (Lite is recommended). Should also work
 on other Debian distributions though webcam support may depend on the specific hardware.
