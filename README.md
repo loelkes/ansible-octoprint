@@ -193,7 +193,7 @@ License
 
 BSD 2-Clause
 
-![License](https://img.shields.io/github/license/semuconsulting/ansible_octoprint)
+![License](https://img.shields.io/github/license/semuconsulting/semuadmin.octoprint)
 
 Author Information
 ------------------
