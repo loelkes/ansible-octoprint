@@ -7,7 +7,7 @@ title: ''
 
 labels: ''
 
-assignees: semuadmin
+assignees: loelkes
 
 ---
 
@@ -17,16 +17,16 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 
-Steps to reproduce the behaviour.
+Steps to reproduce the behavior.
 
-**Expected Behaviour**
+**Expected Behavior**
 
 A clear and concise description of what you expected to happen.
 
 **Desktop (please complete the following information):**
 
 - The operating system you're using [e.g. Ubuntu Bionic]
-- The type of device you're using (e.g. Raspi 4 8MB)
+- The type of device you're using (e.g. Raspi 4 8GB)
 
 **Additional context**
 

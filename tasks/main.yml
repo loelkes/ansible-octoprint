@@ -1,14 +1,51 @@
 ---
-# tasks file for octoprint
 
-- name: Install octoprint
+- name: Preflight checks
+  ansible.builtin.include_tasks: preflight.yml
+
+- name: Get service facts
+  ansible.builtin.service_facts:
+
+- name: Stop the OctoPrint service
+  ansible.builtin.systemd:
+    name: octoprint
+    enabled: false
+    state: stopped
+    daemon_reload: true
+  when: octoprint.state == 'absent' and 'octoprint.service' in ansible_facts.services
+
+- name: Manage dependencies
+  ansible.builtin.include_tasks: dependencies.yml
+
+- name: Configure system
+  ansible.builtin.include_tasks: system.yml
+
+- name: Configure OctoPrint
   ansible.builtin.include_tasks: octoprint.yml
-  when: install_octoprint and not uninstall_services
+  when: octoprint.state == 'present'
 
-- name: Install mjpg_streamer
-  ansible.builtin.include_tasks: webcam.yml
-  when: install_mjpg_streamer and not uninstall_services
+- name: Start the OctoPrint service
+  ansible.builtin.systemd:
+    name: octoprint
+    enabled: true
+    state: restarted
+    daemon_reload: true
+  when: octoprint.state == 'present'
 
-- name: Remove octoprint and mjpg_streamer
-  ansible.builtin.include_tasks: uninstall.yml
-  when: uninstall_services
+- name: Wait 30s for port to become open on the host
+  ansible.builtin.wait_for:
+    port: "{{ octoprint.port }}"
+    delay: 30
+  when: octoprint.state == 'present'
+
+- name: Check the OctoPrint service
+  ansible.builtin.systemd:
+    name: octoprint
+  when: octoprint.state == 'present'
+  register: octoprint_service_status
+
+- name: Check that service is running
+  ansible.builtin.assert:
+    that: octoprint_service_status.status.ActiveState == 'active'
+    fail_msg: "OctoPrint service failed to start."
+  when: octoprint.state == 'present'

@@ -1,0 +1,21 @@
+---
+
+- name: Install or remove Python dependencies
+  ansible.builtin.package:
+    name:
+      - python3-pip
+      - python3-dev
+      - python3-setuptools
+    state: "{{ octoprint.state }}"
+    update_cache: true
+
+- name: Gather package facts
+  ansible.builtin.package_facts:
+    manager: apt
+
+- name: Install or remove virtualenv via pip
+  ansible.builtin.pip:
+    name:
+      - virtualenv
+    state: "{{ octoprint.state }}"
+  when: "'python3-pip' in ansible_facts.packages"

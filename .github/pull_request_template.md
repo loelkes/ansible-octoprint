@@ -1,4 +1,4 @@
-# ansible_octoprint Pull Request Template
+# ansible-octoprint Pull Request Template
 
 ## Description
 
@@ -8,12 +8,7 @@ Fixes # (issue)
 
 ## Testing
 
-Please ensure your changes are tested on as wide a variety of target devices as possible, including where possible:
-
-- Raspi Lite OS 32-bit and 64-bit
-- Ubuntu Bionic (18.04 lTS), Focal (20.04 LTS) & Jammy (22.04 LTS)
-- Ubuntu Kinetic (22.10)
-- Debian Bullseye (11)
+Please ensure your changes are tested on as wide a variety of target devices as possible, including where possible the latest versions of Debian, Ubuntu and Raspbian.
 
 ## Checklist:
 

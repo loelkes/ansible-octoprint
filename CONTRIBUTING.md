@@ -1,6 +1,6 @@
 # Ansible OctoPrint Role -  How to contribute
 
-Ansible_Octoprint is a volunteer project and we appreciate any contribution, from fixing a grammar mistake in a comment to extending test coverage or implementing new functionality. Please read this section if you are contributing your work.
+*ansible-octoprint* is a volunteer project and we appreciate any contribution, from fixing a grammar mistake in a comment to extending test coverage or implementing new functionality. Please read this section if you are contributing your work.
 
 Being one of our contributors, you agree and confirm that:
 
@@ -13,22 +13,16 @@ Please help us keep our issue list small by adding fixes: #{$ISSUE_NO} to the co
 ## Coding conventions
 
 * This is open source software. Code should be as simple and transparent as possible. Favour clarity over brevity.
-* The code should be compatible with Ansible >= 2.14.
-* The code should be compatible with Python >= 3.7.
+* The code should be compatible with Ansible >= 2.15.
 * Commits should be [signed](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
 
 ## Testing
 
-Please ensure your changes are tested on as wide a variety of target devices as possible, including where possible:
-
-- Raspi Lite OS 32-bit and 64-bit
-- Ubuntu Bionic (18.04 LTS), Focal (20.04 LTS) & Jammy (22.04 LTS)
-- Ubuntu Kinetic (22.10)
-- Debian Bullseye (11)
+Please ensure your changes are tested on as wide a variety of target devices as possible, including where possible the latest versions of Debian, Ubuntu and Raspbian.
 
 ## Submitting changes
 
-Please send a [GitHub Pull Request to Ansible-Octoprint](https://github.com/semuconsulting/ansible_octoprint/pulls) with a clear list of what you've done (read more about [pull requests](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests)). Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
+Please send a [GitHub Pull Request to Ansible-OctoPrint](https://github.com/loelkes/ansible-octoprint/pulls) with a clear list of what you've done (read more about [pull requests](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests)). Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
 
 Please sign all commits - see [Signing GitHub Commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) for instructions.
 
@@ -39,6 +33,4 @@ Always write a clear log message for your commits. One-line messages are fine fo
     > A paragraph describing what changed and its impact."
 
 
-Thanks,
-
-semuadmin
+Thanks

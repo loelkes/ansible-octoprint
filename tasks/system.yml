@@ -1,0 +1,42 @@
+---
+
+- name: Add or remove OctoPrint user to tty and dialout groups
+  ansible.builtin.user:
+    name: "{{ octoprint.user }}"
+    groups: "{{ 'tty, dialout' if octoprint.state == 'present' else '' }}"
+    append: true
+
+- name: Create or delete OctoPrint directory
+  ansible.builtin.file:
+    path: "{{ octoprint.dir }}"
+    state: "{{ 'directory' if octoprint.state == 'present' else 'absent' }}"
+    mode: '755'
+    owner: "{{ octoprint.user }}"
+    group: "{{ octoprint.group }}"
+
+- name: Manage sudoers permissions
+  community.general.sudoers:
+    name: /etc/sudoers.d/octoprint
+    state: "{{ octoprint.state }}"
+    validation: detect
+    user: "{{ octoprint.user }}"
+    commands:
+      - /usr/bin/systemctl restart octoprint
+      - /usr/bin/systemctl start octoprint
+      - /usr/bin/systemctl stop octoprint
+      - /usr/sbin/shutdown -r now
+      - /usr/sbin/shutdown -h now
+
+- name: Setup systemd service template
+  ansible.builtin.template:
+    mode: '644'
+    src: octoprint.service.j2
+    dest: /etc/systemd/system/octoprint.service
+    owner: "{{ octoprint.user }}"
+  when: octoprint.state == 'present'
+
+- name: Remove systemd service file
+  ansible.builtin.file:
+    path: /etc/systemd/system/octoprint.service
+    state: absent
+  when: octoprint.state == 'absent'

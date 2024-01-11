@@ -1,118 +1,37 @@
 ---
-# tasks file for octoprint
 
-- name: Install Python dependencies.
-  ansible.builtin.package:
-    name:
-      - python3-pip
-      - python3-dev
-      - python3-setuptools
-    state: present
-    update_cache: true
-
-- name: Install virtualenv via pip.
-  ansible.builtin.pip:
-    name:
-      - virtualenv
-    state: present
-
-- name: Install other dependencies.
-  ansible.builtin.package:
-    name:
-      - git
-      - libyaml-dev
-      - build-essential
-    state: present
-
-- name: Add octoprint user to tty and dialout groups.
-  ansible.builtin.user:
-    name: "{{ octoprint_user }}"
-    groups: tty, dialout
-    append: true
-
-- name: Create octoprint directory.
-  ansible.builtin.file:
-    path: "{{ install_dir }}/Octoprint"
-    state: directory
-    owner: "{{ octoprint_user }}"
-    group: "{{ octoprint_user }}"
-
-- name: Create user config directory.
-  ansible.builtin.file:
-    path: "{{ install_dir }}/.octoprint/"
-    state: directory
-    owner: "{{ octoprint_user }}"
-    group: "{{ octoprint_user }}"
-
-- name: Install OctoPrint via pip - the latest version.
-  ansible.builtin.pip:
-    name: "{{ latest_octoprint_url }}"
-    state: present
-    virtualenv: "{{ install_dir }}/Octoprint/venv"
-    virtualenv_command: virtualenv
-    virtualenv_python: python3
-  when: octoprint_version == 'latest'
-
-- name: Install OctoPrint via pip - the defined version.
+- name: Install OctoPrint via pip - latest version
   ansible.builtin.pip:
     name: octoprint
-    version: "=={{ octoprint_version }}"
     state: present
-    virtualenv: "{{ install_dir }}/Octoprint/venv"
+    virtualenv: "{{ octoprint.dir }}/venv"
     virtualenv_command: virtualenv
     virtualenv_python: python3
-  when: octoprint_version != 'latest'
+  when: octoprint.version == 'latest'
 
-- name: Install config.yaml template.
-  ansible.builtin.template:
-    src: config.yaml.j2
-    dest: "{{ install_dir }}/.octoprint/config.yaml"
-    owner: "{{ octoprint_user }}"
-  when: reset_config
-
-- name: Install init template.
-  ansible.builtin.template:
-    src: octoprint.init.j2
-    dest: /etc/init.d/octoprint
-    mode: +x
-    owner: "{{ octoprint_user }}"
-
-- name: Install default template.
-  ansible.builtin.template:
-    src: octoprint.default.j2
-    dest: /etc/default/octoprint
-    owner: "{{ octoprint_user }}"
-
-- name: Install systemd service template.
-  ansible.builtin.template:
-    src: octoprint.service.j2
-    dest: /etc/systemd/system/octoprint.service
-    owner: "{{ octoprint_user }}"
-
-- name: Add lines to sudoers.
-  ansible.builtin.lineinfile:
-    path: /etc/sudoers
+- name: Install OctoPrint via pip - specific version
+  ansible.builtin.pip:
+    name: octoprint
+    version: "=={{ octoprint.version }}"
     state: present
-    line: "{{ item }}"
-    validate: /usr/sbin/visudo -cf %s
-  loop:
-    - "{{ octoprint_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl restart octoprint"
-    - "{{ octoprint_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl start octoprint"
-    - "{{ octoprint_user }} ALL=(ALL) NOPASSWD:/usr/bin/systemctl stop octoprint"
-    - "{{ octoprint_user }} ALL=(ALL) NOPASSWD:/usr/sbin/shutdown -r now"
-    - "{{ octoprint_user }} ALL=(ALL) NOPASSWD:/usr/sbin/shutdown -h now"
+    virtualenv: "{{ octoprint.dir }}/venv"
+    virtualenv_command: virtualenv
+    virtualenv_python: python3
+  when: octoprint.version != 'latest'
 
-- name: Change ownership of install directory.
+- name: Configure OctoPrint restart commands
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - "{{ octoprint.dir }}/venv/bin/octoprint -c {{ octoprint.dir }}/config.yml config set server.commands.serverRestartCommand 'sudo systemctl restart octoprint'"
+    - "{{ octoprint.dir }}/venv/bin/octoprint -c {{ octoprint.dir }}/config.yml config set server.commands.systemRestartCommand 'sudo shutdown -r now'"
+    - "{{ octoprint.dir }}/venv/bin/octoprint -c {{ octoprint.dir }}/config.yml config set server.commands.systemShutdownCommand 'sudo shutdown -h now'"
+  when: octoprint.state == 'present'
+  changed_when: true
+
+- name: Set directory owner and group
   ansible.builtin.file:
-    path: "{{ install_dir }}"
+    path: "{{ octoprint.dir }}"
     state: directory
     recurse: true
-    owner: "{{ octoprint_user }}"
-    group: "{{ octoprint_user }}"
-
-- name: Start the octoprint service.
-  ansible.builtin.systemd:
-    name: octoprint
-    enabled: true
-    state: restarted
-    daemon_reload: true
+    owner: "{{ octoprint.user }}"
+    group: "{{ octoprint.group }}"

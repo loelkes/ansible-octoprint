@@ -1,0 +1,24 @@
+---
+
+- name: Check privileges
+  ansible.builtin.assert:
+    that:
+      - ansible_user_id == 'root'
+    msg: "This role requires root privileges."
+
+- name: Check if OctoPrint user exists
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ octoprint.user }}"
+  when: octoprint.state == 'present'
+
+- name: Check if OctoPrint group exists
+  ansible.builtin.getent:
+    database: group
+    key: "{{ octoprint.group }}"
+  when: octoprint.state == 'present'
+
+- name: Assert usage of systemd as an init system
+  ansible.builtin.assert:
+    that: ansible_service_mgr == 'systemd'
+    msg: "This module only works with systemd"
